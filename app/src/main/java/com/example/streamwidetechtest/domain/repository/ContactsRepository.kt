@@ -1,8 +1,12 @@
 package com.example.streamwidetechtest.domain.repository
 
+import com.example.streamwidetechtest.domain.model.Contact
+import kotlinx.coroutines.flow.Flow
+
 interface ContactsRepository {
-    fun getAllContacts()
-    fun getContactDetails(id: Int)
-    fun selectContactsByName(name: String)
-    fun selectContactsByPhoneNumber(phoneNumber: String)
+    fun getAllContacts(): Flow<List<Contact>>
+    suspend fun getContactDetails(id: String): Contact
+    suspend fun selectContactsByName(name: String): List<Contact>
+    suspend fun selectContactsByPhoneNumber(phoneNumber: String): List<Contact>
+    suspend fun insetNewContact(contact: Contact)
 }
