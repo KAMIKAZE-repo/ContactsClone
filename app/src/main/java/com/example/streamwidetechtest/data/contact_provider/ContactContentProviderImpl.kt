@@ -6,7 +6,7 @@ import android.content.Context
 import android.provider.ContactsContract
 import com.example.streamwidetechtest.domain.model.Contact
 
-class ContactContentProviderImpl(context: Context): ContactContentProvider {
+class ContactContentProviderImpl(context: Context) : ContactContentProvider {
     private val contentResolver: ContentResolver = context.contentResolver
 
     @SuppressLint("Range")
@@ -15,8 +15,7 @@ class ContactContentProviderImpl(context: Context): ContactContentProvider {
 
         val projection = arrayOf(
             ContactsContract.Contacts._ID,
-            ContactsContract.Contacts.DISPLAY_NAME,
-            ContactsContract.CommonDataKinds.Phone.NUMBER
+            ContactsContract.Contacts.DISPLAY_NAME
         )
 
         val cursor = contentResolver.query(
@@ -32,10 +31,29 @@ class ContactContentProviderImpl(context: Context): ContactContentProvider {
                 val contactId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID))
                 val displayName =
                     cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                val phoneNumber =
-                    cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+
+                val phoneProjection = arrayOf(
+                    ContactsContract.CommonDataKinds.Phone.NUMBER
+                )
+
+                val phoneCursor = contentResolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    phoneProjection,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                    arrayOf(contactId.toString()),
+                    null
+                )
+
+                var phoneNumber = "defaultValue"
+
+                if (phoneCursor != null && phoneCursor.moveToFirst()) {
+                    phoneNumber =
+                        phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                    phoneCursor.close()
+                }
 
                 contacts.add(Contact(contactId, displayName, phoneNumber))
+
             } while (cursor.moveToNext())
 
             cursor.close()

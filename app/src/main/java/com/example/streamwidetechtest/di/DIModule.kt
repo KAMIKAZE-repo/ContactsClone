@@ -29,13 +29,13 @@ object DIModule {
 
     @Provides
     @Singleton
-    fun provideContactsRepository(db: ContactsDataBase): ContactsRepository {
-        return ContactsRepositoryImpl(db.contactsDao)
+    fun provideContactContentProvider(app: Application): ContactContentProvider {
+        return ContactContentProviderImpl(app)
     }
 
     @Provides
     @Singleton
-    fun provideContactContentProvider(app: Application): ContactContentProvider {
-        return ContactContentProviderImpl(app)
+    fun provideContactsRepository(db: ContactsDataBase): ContactsRepository {
+        return ContactsRepositoryImpl(db.contactsDao)
     }
 }

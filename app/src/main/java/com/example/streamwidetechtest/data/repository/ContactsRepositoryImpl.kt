@@ -1,19 +1,25 @@
 package com.example.streamwidetechtest.data.repository
 
+import android.content.Context
+import com.example.streamwidetechtest.data.contact_provider.ContactContentProviderImpl
 import com.example.streamwidetechtest.data.local.ContactsDao
 import com.example.streamwidetechtest.data.mapper.toDomain
 import com.example.streamwidetechtest.data.mapper.toLocal
 import com.example.streamwidetechtest.domain.model.Contact
 import com.example.streamwidetechtest.domain.repository.ContactsRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
-class ContactsRepositoryImpl(private val dao: ContactsDao) : ContactsRepository {
-    override fun getAllContacts(): Flow<List<Contact>> {
-        return dao.getAllContactsDao().map { it.map { contactEntity -> contactEntity.toDomain() } }
+class ContactsRepositoryImpl (
+    private val dao: ContactsDao,
+) : ContactsRepository {
+    override suspend fun getAllContacts(context: Context): List<Contact> {
+        val contacts = ContactContentProviderImpl(context).getAllContacts()
+        contacts.forEach {
+            dao.insertNewContact(it.toLocal())
+        }
+        return dao.getAllContactsDao().map {contactEntity -> contactEntity.toDomain() }
     }
 
-    override suspend fun getContactDetails(id: String): Contact {
+    override suspend fun getContactDetails(id: Long): Contact {
         return dao.getContactById(id).toDomain()
     }
 
