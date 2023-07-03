@@ -1,12 +1,13 @@
 package com.example.streamwidetechtest.domain.repository
 
-import android.content.Context
 import com.example.streamwidetechtest.domain.model.Contact
+import com.example.streamwidetechtest.util.Resource
 
 interface ContactsRepository {
-    suspend fun getAllContacts(context: Context): List<Contact>
-    suspend fun getContactDetails(id: Long): Contact
-    suspend fun selectContactsByName(name: String): List<Contact>
-    suspend fun selectContactsByPhoneNumber(phoneNumber: String): List<Contact>
-    suspend fun insetNewContact(contact: Contact)
+    suspend fun getAllContacts(): Resource<List<Contact>>
+    suspend fun getContactDetails(id: Long): Resource<Contact>
+    suspend fun selectContactsByName(name: String): Resource<List<Contact>>
+    suspend fun selectContactsByPhoneNumber(phoneNumber: String): Resource<List<Contact>>
+    suspend fun insetNewContact(contact: Contact): Resource<Unit>
+    suspend fun addNewContact(name: String, phoneNumber: String): Resource<Unit>
 }
