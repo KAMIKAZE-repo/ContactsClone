@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.example.streamwidetechtest.R
 
 @Composable
-fun ContactCell(name: String, phoneNumber: String, photoUri: String) {
+fun ContactCell(name: String, phoneNumber: String, photoUri: String?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -33,11 +33,7 @@ fun ContactCell(name: String, phoneNumber: String, photoUri: String) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        Image(
-            modifier = Modifier.size(48.dp).clip(CircleShape),
-            painter = painterResource(id = R.drawable.placeholder_person),
-            contentDescription = ""
-        )
+        ContactImage(photoUri)
         Spacer(modifier = Modifier.width(16.dp))
         Column(horizontalAlignment = Alignment.Start) {
             Text(text = name, fontSize = 18.sp, color = Color.Black)

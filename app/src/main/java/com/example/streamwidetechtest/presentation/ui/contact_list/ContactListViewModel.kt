@@ -1,5 +1,6 @@
 package com.example.streamwidetechtest.presentation.ui.contact_list
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -32,6 +33,7 @@ class ContactListViewModel @Inject constructor(
     }
 
     fun fetchContacts() {
+        startLoading()
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 when (val res = repository.getAllContacts()) {
@@ -40,6 +42,7 @@ class ContactListViewModel @Inject constructor(
                             contactList = res.data ?: emptyList(),
                             isLoading = false
                         )
+                        Log.i("TAG", res.data!!.joinToString("|"))
                     }
 
                     is Resource.Error -> {
@@ -49,40 +52,13 @@ class ContactListViewModel @Inject constructor(
                             )
                         )
                     }
-
-                    is Resource.Loading -> {
-                        _state.value = state.value.copy(
-                            contactList = res.data ?: emptyList(),
-                            isLoading = true
-                        )
-                    }
                 }
             }
         }
     }
 
-//
-//    fun getContactById(contactId: Long) {
-//        viewModelScope.launch {
-//            withContext(Dispatchers.IO) {
-//                when (val res = repository.getContactDetails(contactId)) {
-//                    is Resource.Success -> {
-//                        Log.i("TAG", res.data!!.toString())
-//                    }
-//
-//                    is Resource.Error -> {
-//                        _eventFlow.emit(
-//                            UIEvent.ShowSnackbar(
-//                                res.message ?: "Unknown error"
-//                            )
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     fun searchByName(name: String) {
+        startLoading()
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 when (val res = repository.selectContactsByName(name.createSqlPattern())) {
@@ -100,19 +76,13 @@ class ContactListViewModel @Inject constructor(
                             )
                         )
                     }
-
-                    is Resource.Loading -> {
-                        _state.value = state.value.copy(
-                            contactList = res.data ?: emptyList(),
-                            isLoading = true
-                        )
-                    }
                 }
             }
         }
     }
 
     fun searchByPhoneNumber(phoneNumber: String) {
+        startLoading()
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 when (val res = repository.selectContactsByPhoneNumber(phoneNumber.createSqlPattern())) {
@@ -130,35 +100,15 @@ class ContactListViewModel @Inject constructor(
                             )
                         )
                     }
-
-                    is Resource.Loading -> {
-                        _state.value = state.value.copy(
-                            contactList = res.data ?: emptyList(),
-                            isLoading = true
-                        )
-                    }
                 }
             }
         }
     }
 
-//    fun addNewContact(name: String, phoneNumber: String) {
-//        viewModelScope.launch {
-//            withContext(Dispatchers.IO) {
-//                when (val res = repository.addNewContact(name, phoneNumber)) {
-//                    is Resource.Success -> {
-//                        Log.i("TAG", "successfully added")
-//                    }
-//
-//                    is Resource.Error -> {
-//                        _eventFlow.emit(
-//                            UIEvent.ShowSnackbar(
-//                                res.message ?: "Unknown error"
-//                            )
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private fun startLoading(){
+        _state.value = state.value.copy(
+            contactList = emptyList(),
+            isLoading = true
+        )
+    }
 }

@@ -9,4 +9,5 @@ data class ContactEntity(
     val contactId: Long,
     val name: String,
     val phoneNumber: String,
+    val photoUri: String? = null,
 )

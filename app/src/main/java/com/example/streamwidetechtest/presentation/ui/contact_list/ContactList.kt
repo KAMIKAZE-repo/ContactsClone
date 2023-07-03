@@ -1,14 +1,17 @@
 package com.example.streamwidetechtest.presentation.ui.contact_list
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -54,9 +57,14 @@ fun ContactList(
     Scaffold(
         scaffoldState = scaffoldState
     ) {
-        Column(Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(.9f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -78,15 +86,34 @@ fun ContactList(
                     viewModel.searchByName(it)
                 }
             }
-            Box(modifier = Modifier.weight(1f).pullRefresh(pullRefreshState)) {
-                LazyColumn {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .pullRefresh(pullRefreshState)
+            ) {
+                LazyColumn() {
                     items(state.contactList.size) {
                         with(state.contactList[it]) {
-                            ContactCell(name = name, phoneNumber = phoneNumber, photoUri = "")
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                ContactCell(
+                                    name = name,
+                                    phoneNumber = phoneNumber,
+                                    photoUri = photoUri
+                                )
+                                if (it < state.contactList.lastIndex)
+                                    Divider(
+                                        modifier = Modifier.fillMaxWidth(.8f),
+                                        color = Color.LightGray,
+                                    )
+                            }
                         }
                     }
                 }
-                PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+                PullRefreshIndicator(
+                    refreshing,
+                    pullRefreshState,
+                    Modifier.align(Alignment.TopCenter)
+                )
                 if (state.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }

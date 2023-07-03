@@ -3,15 +3,12 @@ package com.example.streamwidetechtest.data.contact_provider
 import android.annotation.SuppressLint
 import android.content.ContentProviderOperation
 import android.content.ContentResolver
-import android.content.ContentUris
-import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.util.Log
 import com.example.streamwidetechtest.domain.model.Contact
 import com.example.streamwidetechtest.util.Resource
-
 
 class ContactContentProviderImpl(private val context: Context) : ContactContentProvider {
     private val contentResolver: ContentResolver = context.contentResolver
@@ -23,6 +20,7 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
         val projection = arrayOf(
             ContactsContract.Contacts._ID,
             ContactsContract.Contacts.DISPLAY_NAME,
+            ContactsContract.Contacts.PHOTO_THUMBNAIL_URI
         )
 
         val cursor = contentResolver.query(
@@ -38,6 +36,8 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
                 val contactId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID))
                 val displayName =
                     cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                val photoUri =
+                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI))
 
                 val phoneProjection = arrayOf(
                     ContactsContract.CommonDataKinds.Phone.NUMBER,
@@ -52,7 +52,7 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
                     null
                 )
 
-                var phoneNumber = "defaultValue"
+                var phoneNumber = displayName
 
                 if (phoneCursor != null && phoneCursor.moveToFirst()) {
                     phoneNumber =
@@ -66,7 +66,7 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
                     phoneCursor.close()
                 }
 
-                contacts.add(Contact(contactId, displayName, phoneNumber))
+                contacts.add(Contact(contactId, displayName, phoneNumber, photoUri))
 
             } while (cursor.moveToNext())
 
@@ -77,7 +77,7 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
     }
 
     @SuppressLint("Range")
-    override suspend fun getContactDetailsById(rawContactID: Long) {
+    override suspend fun getContactDetailsById(contactId: Long) {
         val accountPos = 0
 
         var cursor: Cursor? = null
@@ -89,7 +89,7 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
             ContactsContract.RawContacts.ACCOUNT_TYPE
         )
         val whereClause = ContactsContract.RawContacts._ID + "=?"
-        val whereParams = arrayOf<String>(java.lang.String.valueOf(rawContactID))
+        val whereParams = arrayOf<String>(java.lang.String.valueOf(contactId))
         try {
             cursor = contentResolver.query(
                 rawContactUri,
