@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.streamwidetechtest.presentation.component.RequestContactPermission
+import com.example.streamwidetechtest.presentation.navigation.NavigationHost
 import com.example.streamwidetechtest.presentation.ui.contact_list.ContactList
 import com.example.streamwidetechtest.ui.theme.StreamWideTechTestTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,13 +23,14 @@ class MainActivity : ComponentActivity() {
                 RequestContactPermission {
 //                    openAppSettings()
                 }
-                ContactList()
+                NavigationHost()
             }
         }
     }
 
     companion object {
-        val permission = arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)
+        val permission =
+            arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)
     }
 }
 

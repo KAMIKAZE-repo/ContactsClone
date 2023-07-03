@@ -1,6 +1,7 @@
 package com.example.streamwidetechtest.presentation.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +26,14 @@ import androidx.compose.ui.unit.sp
 import com.example.streamwidetechtest.R
 
 @Composable
-fun ContactCell(name: String, phoneNumber: String, photoUri: String?) {
+fun ContactCell(name: String, phoneNumber: String, photoUri: String?, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable {
+                onClick()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -46,6 +50,6 @@ fun ContactCell(name: String, phoneNumber: String, photoUri: String?) {
 @Preview(showSystemUi = true, showBackground = true)
 fun PreviewContactCell() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        ContactCell(name = "nassim", phoneNumber = "26 543 662", "")
+        ContactCell(name = "nassim", phoneNumber = "26 543 662", ""){}
     }
 }

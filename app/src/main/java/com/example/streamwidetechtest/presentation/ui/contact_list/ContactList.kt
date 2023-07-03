@@ -1,7 +1,7 @@
 package com.example.streamwidetechtest.presentation.ui.contact_list
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,9 +33,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.streamwidetechtest.R
 import com.example.streamwidetechtest.presentation.component.ContactCell
 import com.example.streamwidetechtest.presentation.component.SearchField
+import com.example.streamwidetechtest.presentation.navigation.Screen
 import com.example.streamwidetechtest.util.UIEvent
 import com.example.streamwidetechtest.util.isAllNumbers
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +46,8 @@ import kotlinx.coroutines.flow.collectLatest
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ContactList(
-    viewModel: ContactListViewModel = hiltViewModel()
+    viewModel: ContactListViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val scaffoldState = rememberScaffoldState()
     val refreshing by remember {
@@ -69,7 +72,9 @@ fun ContactList(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Contacts", color = Color(0xFF256A78))
-                IconButton(onClick = {/*navigate to add new contact*/ }) {
+                IconButton(onClick = {
+                    /**/
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.add_contact_icon),
                         contentDescription = "new contact"
@@ -99,7 +104,10 @@ fun ContactList(
                                     name = name,
                                     phoneNumber = phoneNumber,
                                     photoUri = photoUri
-                                )
+                                ) {
+                                    Log.i("TAG", id.toString())
+                                    navController.navigate(Screen.ContactDetailScreen.route + "/" + id)
+                                }
                                 if (it < state.contactList.lastIndex)
                                     Divider(
                                         modifier = Modifier.fillMaxWidth(.8f),
