@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.example.streamwidetechtest.R
+import com.example.streamwidetechtest.presentation.component.ContactDetailRow
 import com.example.streamwidetechtest.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -74,23 +75,9 @@ fun ContactDetails(contactId: String, viewModel: ContactDetailViewModel = hiltVi
                     .weight(1f)
                     .padding(horizontal = 8.dp, vertical = 16.dp)
             ) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.phone_number_icon),
-                        contentDescription = "phone_number"
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    state.data?.let { it1 -> Text(text = it1.phoneNumber) }
-                }
+                ContactDetailRow(title = state.data?.phoneNumber, icon = R.drawable.phone_number_icon)
                 Spacer(modifier = Modifier.height(16.dp))
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.email_icon),
-                        contentDescription = "email"
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = "nassim.boussami@gmail.com")
-                }
+                ContactDetailRow(title = state.data?.email, icon = R.drawable.email_icon)
             }
         }
         LaunchedEffect(key1 = true) {

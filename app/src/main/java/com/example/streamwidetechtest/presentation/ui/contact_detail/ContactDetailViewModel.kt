@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.streamwidetechtest.domain.repository.ContactsRepository
-import com.example.streamwidetechtest.presentation.ui.contact_list.ContactsListState
 import com.example.streamwidetechtest.util.Resource
 import com.example.streamwidetechtest.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
