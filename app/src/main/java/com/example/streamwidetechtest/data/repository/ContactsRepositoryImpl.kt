@@ -5,6 +5,7 @@ import com.example.streamwidetechtest.data.local.ContactsDao
 import com.example.streamwidetechtest.data.mapper.toDomain
 import com.example.streamwidetechtest.data.mapper.toLocal
 import com.example.streamwidetechtest.domain.model.Contact
+import com.example.streamwidetechtest.domain.model.ContactDetails
 import com.example.streamwidetechtest.domain.repository.ContactsRepository
 import com.example.streamwidetechtest.util.Resource
 
@@ -26,9 +27,9 @@ class ContactsRepositoryImpl(
         }
     }
 
-    override suspend fun getContactDetails(id: Long): Resource<Contact> {
+    override suspend fun getContactDetails(id: Long): Resource<ContactDetails> {
         return try {
-            Resource.Success(dao.getContactById(id).toDomain())
+            Resource.Success(contactContentProvider.getContactDetailsById(id))
         } catch (e: Exception) {
             Resource.Error(e.localizedMessage?.toString() ?: "Something went wrong!")
         }

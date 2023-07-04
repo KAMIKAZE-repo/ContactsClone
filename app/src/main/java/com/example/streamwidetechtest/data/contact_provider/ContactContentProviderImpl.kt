@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.content.ContentProviderOperation
 import android.content.ContentResolver
 import android.content.Context
-import android.database.Cursor
 import android.provider.ContactsContract
 import android.util.Log
 import com.example.streamwidetechtest.domain.model.Contact
+import com.example.streamwidetechtest.domain.model.ContactDetails
 import com.example.streamwidetechtest.util.Resource
 
 class ContactContentProviderImpl(private val context: Context) : ContactContentProvider {
@@ -33,15 +33,14 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                val contactId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+                val contactId = cursor.getLong(cursor.getColumnIndex(projection[0]))
                 val displayName =
-                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                    cursor.getString(cursor.getColumnIndex(projection[1]))
                 val photoUri =
-                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI))
+                    cursor.getString(cursor.getColumnIndex(projection[2]))
 
                 val phoneProjection = arrayOf(
                     ContactsContract.CommonDataKinds.Phone.NUMBER,
-                    ContactsContract.CommonDataKinds.Phone.TYPE
                 )
 
                 val phoneCursor = contentResolver.query(
@@ -56,13 +55,8 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
 
                 if (phoneCursor != null && phoneCursor.moveToFirst()) {
                     phoneNumber =
-                        phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                    val type = phoneCursor.getString(
-                        phoneCursor.getColumnIndex(
-                            ContactsContract.CommonDataKinds.Phone.TYPE
-                        )
-                    )
-                    Log.i("TAG", "phone type: $type")
+                        phoneCursor.getString(phoneCursor.getColumnIndex(phoneProjection[0]))
+
                     phoneCursor.close()
                 }
 
@@ -77,47 +71,33 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
     }
 
     @SuppressLint("Range")
-    override suspend fun getContactDetailsById(contactId: Long) {
-        val accountPos = 0
+    override suspend fun getContactDetailsById(contactId: Long): ContactDetails {
+        val contactDetails = ContactDetails(contactId, "", "")
 
-        var cursor: Cursor? = null
-        var accountName: String? = null
-        var accountType: String? = null
-        val rawContactUri = ContactsContract.RawContacts.CONTENT_URI
-        val syncColumns = arrayOf(
-            ContactsContract.RawContacts.ACCOUNT_NAME,
-            ContactsContract.RawContacts.ACCOUNT_TYPE
+        val detailsProjection = arrayOf(
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+            ContactsContract.CommonDataKinds.Phone.NUMBER,
+            ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
         )
-        val whereClause = ContactsContract.RawContacts._ID + "=?"
-        val whereParams = arrayOf<String>(java.lang.String.valueOf(contactId))
-        try {
-            cursor = contentResolver.query(
-                rawContactUri,
-                syncColumns,
-                whereClause,
-                whereParams,
-                null
-            )
-            if (cursor != null && cursor.count > 0) {
-                cursor.moveToFirst()
-                if (cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME) >= 0) {
-                    accountName =
-                        cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME))
-                }
-                if (cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE) >= 0) {
-                    accountType =
-                        cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE))
-                }
-                cursor.close()
-                cursor = null
-            }
-        } catch (e: Exception) {
-            Log.d("TAG", "getting account info failed")
-        } finally {
-            cursor?.close()
-            cursor = null
+
+        val detailsCursor = contentResolver.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            detailsProjection,
+            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+            arrayOf(contactId.toString()),
+            null
+        )
+
+        if (detailsCursor != null && detailsCursor.moveToFirst()) {
+
+            contactDetails.name =  detailsCursor.getString(detailsCursor.getColumnIndex(detailsProjection[0]))
+            contactDetails.phoneNumber =  detailsCursor.getString(detailsCursor.getColumnIndex(detailsProjection[1]))
+            contactDetails.photoUri =  detailsCursor.getString(detailsCursor.getColumnIndex(detailsProjection[2]))
+            contactDetails.email = getAddressEmail(contactId)
+
+            detailsCursor.close()
         }
-        Log.d("TAG", "$accountName $accountType")
+        return contactDetails
     }
 
     override suspend fun addNewContact(displayName: String, phoneNumber: String): Resource<Unit> {
@@ -159,5 +139,29 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
             Log.e("TAG", "Exception encountered while inserting contact: $e")
             Resource.Error(e.localizedMessage ?: "error")
         }
+    }
+
+    @SuppressLint("Range")
+    private fun getAddressEmail(contactId: Long): String? {
+        var email: String? = null
+
+        val emailProjection = arrayOf(
+            ContactsContract.CommonDataKinds.Email.ADDRESS
+        )
+
+        val emailCursor = contentResolver.query(
+            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+            emailProjection,
+            ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+            arrayOf(contactId.toString()),
+            null
+        )
+
+        if (emailCursor != null && emailCursor.moveToFirst()) {
+            email =
+                emailCursor.getString(emailCursor.getColumnIndex(emailProjection[0]))
+            emailCursor.close()
+        }
+        return email
     }
 }
