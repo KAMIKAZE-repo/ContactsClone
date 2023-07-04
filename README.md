@@ -20,7 +20,7 @@ To use this app, you can clone the repository and run it in Android Studio. You 
 - Android SDK
 
 ### Installation
-1. Clone the repository: `git clone <repository-url>`
+1. Clone the repository: `git clone https://github.com/KAMIKAZE-repo/ContactsClone`
 2. Open the project in Android Studio
 3. Build and run the app
 
@@ -37,7 +37,7 @@ The app contains unit tests for some of its functionalities. To run the unit tes
 - Jetpack Compose
 
 ## Contributors
-- [Your Name](https://github.com/yourusername)
+- [Boussami Nassim](https://github.com/KAMIKAZE-repo)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
