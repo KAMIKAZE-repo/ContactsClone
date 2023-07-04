@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">StreamWideTechTest</string>
     <string name="search_placeholder">Search</string>
+    <string name="grant_permission_title">Grant permission</string>
+    <string name="permission_body">Read contact permission is required for this app!</string>
 </resources>

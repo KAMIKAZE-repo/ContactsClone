@@ -16,7 +16,7 @@ fun NavigationHost() {
         }
         composable(Screen.ContactDetailScreen.route + "/{contactId}") {
             ContactDetails(
-                contactId = it.arguments!!.getString("contactId")!!
+                navController, contactId = it.arguments!!.getString("contactId")!!
             )
         }
     }

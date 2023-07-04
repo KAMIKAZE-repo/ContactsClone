@@ -9,12 +9,16 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.streamwidetechtest.R
 
 @Composable
-fun PermissionDialog() {
+fun PermissionDialog(
+    requestPermission: () -> Unit
+) {
     AlertDialog(
         onDismissRequest = {},
         confirmButton = {
@@ -24,12 +28,13 @@ fun PermissionDialog() {
                 Divider()
                 Text(
                     text =
-                    "Grant permission",
+                    stringResource(R.string.grant_permission_title),
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            requestPermission()
                         }
                         .padding(16.dp)
                 )
@@ -40,7 +45,7 @@ fun PermissionDialog() {
         },
         text = {
             Text(
-                text = "bras la7nina aka permission!"
+                text = stringResource(R.string.permission_body)
             )
         }
     )

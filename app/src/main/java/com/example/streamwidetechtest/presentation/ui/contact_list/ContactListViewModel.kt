@@ -25,6 +25,9 @@ class ContactListViewModel @Inject constructor(
     private val _state = mutableStateOf(ContactsListState())
     val state: State<ContactsListState> = _state
 
+    private val _searchString = mutableStateOf("")
+    val searchString: State<String> = _searchString
+
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -110,5 +113,9 @@ class ContactListViewModel @Inject constructor(
             contactList = emptyList(),
             isLoading = true
         )
+    }
+
+    fun setSearchString(query: String) {
+        _searchString.value = query
     }
 }

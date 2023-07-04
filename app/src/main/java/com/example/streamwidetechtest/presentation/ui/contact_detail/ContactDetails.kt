@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -24,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.streamwidetechtest.R
 import com.example.streamwidetechtest.presentation.component.ContactDetailRow
@@ -32,7 +34,11 @@ import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ContactDetails(contactId: String, viewModel: ContactDetailViewModel = hiltViewModel()) {
+fun ContactDetails(
+    navController: NavController,
+    contactId: String,
+    viewModel: ContactDetailViewModel = hiltViewModel()
+) {
 
     LaunchedEffect(key1 = true) {
         viewModel.fetchContactDetails(contactId.toLong())
@@ -61,6 +67,15 @@ fun ContactDetails(contactId: String, viewModel: ContactDetailViewModel = hiltVi
                     contentDescription = "contact image",
                     contentScale = ContentScale.FillBounds
                 )
+                IconButton(modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp), onClick = { navController.popBackStack() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.back_arrow_icon),
+                        contentDescription = "back to contacts list",
+                        tint = Color.White
+                    )
+                }
                 state.data?.let { it1 ->
                     Text(
                         modifier = Modifier.padding(
@@ -75,7 +90,10 @@ fun ContactDetails(contactId: String, viewModel: ContactDetailViewModel = hiltVi
                     .weight(1f)
                     .padding(horizontal = 8.dp, vertical = 16.dp)
             ) {
-                ContactDetailRow(title = state.data?.phoneNumber, icon = R.drawable.phone_number_icon)
+                ContactDetailRow(
+                    title = state.data?.phoneNumber,
+                    icon = R.drawable.phone_number_icon
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 ContactDetailRow(title = state.data?.email, icon = R.drawable.email_icon)
             }

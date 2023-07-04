@@ -31,7 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.streamwidetechtest.R
@@ -56,6 +58,15 @@ fun ContactList(
     val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.fetchContacts() })
 
     val state = viewModel.state.value
+    val searchString = viewModel.searchString.value
+
+    LaunchedEffect(searchString) {
+        if (searchString.isAllNumbers()) {
+            viewModel.searchByPhoneNumber(searchString)
+        } else {
+            viewModel.searchByName(searchString)
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState
@@ -67,29 +78,25 @@ fun ContactList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(.9f),
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .fillMaxWidth(.9f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Contacts", color = Color(0xFF256A78))
-                IconButton(onClick = {
-                    /**/
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.add_contact_icon),
-                        contentDescription = "new contact"
-                    )
-                }
+                Text(
+                    text = "Contacts",
+                    color = Color(0xFF256A78),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
             SearchField(
                 widthFraction = .9f,
-                placeHolder = stringResource(R.string.search_placeholder)
+                placeHolder = stringResource(R.string.search_placeholder),
+                initialText = searchString
             ) {
-                if (it.isAllNumbers()) {
-                    viewModel.searchByPhoneNumber(it)
-                } else {
-                    viewModel.searchByName(it)
-                }
+                viewModel.setSearchString(it)
             }
             Box(
                 modifier = Modifier

@@ -25,9 +25,9 @@ import com.example.streamwidetechtest.R
 
 
 @Composable
-fun SearchField(widthFraction: Float, placeHolder: String, onTextChange: (String) -> Unit) {
+fun SearchField(widthFraction: Float, placeHolder: String, initialText: String, onTextChange: (String) -> Unit) {
     // State for the text value
-    var text by remember { mutableStateOf(TextFieldValue("")) }
+    var text by remember { mutableStateOf(TextFieldValue(initialText)) }
 
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(widthFraction).clip(RoundedCornerShape(16.dp)),
@@ -58,6 +58,6 @@ fun SearchField(widthFraction: Float, placeHolder: String, onTextChange: (String
 @Preview(showBackground = true, showSystemUi = true)
 fun PreviewSearchField() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        SearchField(widthFraction = .8f, placeHolder = "Search", onTextChange = {})
+        SearchField(widthFraction = .8f, placeHolder = "Search", ""){}
     }
 }
