@@ -100,47 +100,6 @@ class ContactContentProviderImpl(private val context: Context) : ContactContentP
         return contactDetails
     }
 
-    override suspend fun addNewContact(displayName: String, phoneNumber: String): Resource<Unit> {
-        val ops = arrayListOf<ContentProviderOperation>()
-
-        var op: ContentProviderOperation.Builder =
-            ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                .withValue(
-                    ContactsContract.Data.MIMETYPE,
-                    ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE
-                )
-                .withValue(
-                    ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
-                    displayName
-                )
-        // Builds the operation and adds it to the array of operations
-        ops.add(op.build())
-
-        op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-            // Sets the data row's MIME type to Phone
-            .withValue(
-                ContactsContract.Data.MIMETYPE,
-                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
-            )
-            // Sets the phone number and type
-            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
-        //  .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, phoneType)
-
-        // Builds the operation and adds it to the array of operations
-        ops.add(op.build())
-
-        return try {
-            val res = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
-            Resource.Success(Unit)
-        } catch (e: Exception) {
-            // Log exception
-            Log.e("TAG", "Exception encountered while inserting contact: $e")
-            Resource.Error(e.localizedMessage ?: "error")
-        }
-    }
-
     @SuppressLint("Range")
     private fun getAddressEmail(contactId: Long): String? {
         var email: String? = null

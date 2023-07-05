@@ -10,5 +10,4 @@ interface ContactsRepository {
     suspend fun selectContactsByName(name: String): Resource<List<Contact>>
     suspend fun selectContactsByPhoneNumber(phoneNumber: String): Resource<List<Contact>>
     suspend fun insetNewContact(contact: Contact): Resource<Unit>
-    suspend fun addNewContact(name: String, phoneNumber: String): Resource<Unit>
 }

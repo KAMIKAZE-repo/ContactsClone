@@ -59,8 +59,4 @@ class ContactsRepositoryImpl(
             Resource.Error(e.localizedMessage?.toString() ?: "Something went wrong!")
         }
     }
-
-    override suspend fun addNewContact(name: String, phoneNumber: String): Resource<Unit> {
-        return contactContentProvider.addNewContact(name, phoneNumber)
-    }
 }
