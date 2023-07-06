@@ -95,6 +95,11 @@ dependencies {
 
     //permission dependency
     implementation "com.google.accompanist:accompanist-permissions:0.24.9-beta"
+
+    //mockito
+    testImplementation "io.mockk:mockk:1.13.5"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
 }
 
 // Allow references to generated code

@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.example.streamwidetechtest.data.contact_provider.ContactContentProvider
 import com.example.streamwidetechtest.data.contact_provider.ContactContentProviderImpl
 import com.example.streamwidetechtest.data.local.ContactsDataBase
+import com.example.streamwidetechtest.data.local.data_source.ContactsDataSource
+import com.example.streamwidetechtest.data.local.data_source.ContactsDataSourceImpl
 import com.example.streamwidetechtest.data.repository.ContactsRepositoryImpl
 import com.example.streamwidetechtest.domain.repository.ContactsRepository
 import dagger.Module
@@ -35,7 +37,13 @@ object DIModule {
 
     @Provides
     @Singleton
-    fun provideContactsRepository(db: ContactsDataBase, contactContentProvider: ContactContentProvider): ContactsRepository {
-        return ContactsRepositoryImpl(db.contactsDao, contactContentProvider)
+    fun provideDataSource(db: ContactsDataBase): ContactsDataSource {
+        return ContactsDataSourceImpl(db.contactsDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideContactsRepository(dataSource: ContactsDataSource, contactContentProvider: ContactContentProvider): ContactsRepository {
+        return ContactsRepositoryImpl(dataSource, contactContentProvider)
     }
 }

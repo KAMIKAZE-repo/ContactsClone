@@ -4,14 +4,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.streamwidetechtest.domain.model.Contact
-import com.example.streamwidetechtest.domain.repository.ContactsRepository
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ContactsDao {
     @Query("SELECT * FROM contact_entity")
-    suspend fun getAllContactsDao(): List<ContactEntity>
+    suspend fun getAllContacts(): List<ContactEntity>
 
     @Query("SELECT * FROM Contact_Entity WHERE contactId = :contactId")
     suspend fun getContactById(contactId: Long): ContactEntity
